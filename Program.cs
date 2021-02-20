@@ -1,4 +1,9 @@
 ﻿using System;
+using Gtk;
+using Gdk;
+
+using Newtonsoft.Json.Linq;
+
 
 namespace RaindropsCustomAssist
 {
@@ -6,7 +11,10 @@ namespace RaindropsCustomAssist
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Application.Init();
+            new MainPage();
+            Application.Run();
+            // Console.WriteLine("Hello World!");
         }
     }
 }
