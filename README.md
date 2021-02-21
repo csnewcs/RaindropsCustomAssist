@@ -13,7 +13,7 @@
 - .Net 5
 - GTK
     - 윈도우이고, 만약 GTK가 설치되어 있지 않다면 https://github.com/csnewcs/InstallGTKOnWindows 를 통해 GTK를 설치해주세요)
-      (If you are using Windows and GTK wasn't installed, Install GTK with https://github.com/InstallGTKOnWindows)
+      (If you are using Windows and GTK wasn't installed, Install GTK with https://github.com/csnewcs/InstallGTKOnWindows)
 
 ### 빌드 및 실행 (Build & Run program)
 1. 이 레포지트리 클론 (Clone this repository)
