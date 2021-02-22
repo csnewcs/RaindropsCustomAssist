@@ -17,7 +17,7 @@ namespace RaindropsCustomAssist
     struct Event
     {
         double _time;
-        double _yJudge:
+        double _yJudge;
         double _speed;
         double _color;
 
@@ -32,7 +32,7 @@ namespace RaindropsCustomAssist
     struct Note
     {
         double _time;
-        double _xPoint:
+        double _xPoint;
         double _length;
         double _endXPoint;
         NoteType _type;
