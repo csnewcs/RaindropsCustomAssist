@@ -18,8 +18,9 @@
 ### 빌드 및 실행 (Build & Run program)
 1. 이 레포지트리 클론 (Clone this repository)
 ```
-$ git clone https://github.com/csnewcs/RaindropsCustomAssist/edit/main/README.md
+$ git clone https://github.com/csnewcs/RaindropsCustomAssist
 ```
+
 2. 해당 디렉터리에 들어간 후 실행 (Enter the directory and run)
 ```
 $ cd RaindropsCustomAssist
