@@ -26,5 +26,13 @@ namespace RaindropsCustomAssist
             jsonPath = filename;
             if(musicPath != "") doneButton.Sensitive = true;
         }
+        private void doneButton_clicked(object o, EventArgs e)
+        {
+            Console.WriteLine("clicked!");
+            mainGrid.Attach(getMainGrid(), 1, 1, 1, 1);
+            Remove(firstGrid);
+            Add(mainGrid);
+            mainGrid.ShowAll();
+        }
     }
 }
