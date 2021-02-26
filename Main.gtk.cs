@@ -20,7 +20,7 @@ namespace RaindropsCustomAssist
         FileChooserButton openMusicButton = new FileChooserButton("음악 파일 열기", FileChooserAction.Open);
         FileChooserButton openJsonButton = new FileChooserButton("Json 파일 열기", FileChooserAction.Open);
         // ===================파일 복사하는 곳에서 보이는 위젯 =================
-        Entry customDirectoryPath = new Entry();
+        Entry customDirectoryEntry = new Entry();
         Button startCopyButton = new Button("복사 시작!");
         //==========================계속 아래쪽에 있을 위젯====================
         ProgressBar doingProgressBar = new ProgressBar();
@@ -115,9 +115,9 @@ namespace RaindropsCustomAssist
             }
             else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) //리눅스이면 Proton쪽 경로
             {
-                path = $"~/.steam/steam/steamapps/compatdata/1268860/pfx/drive_c/users/steamuser/AppData/LocalLow/Poobool/Raindrops/Custom";
+                path = $"/home/{username}/.steam/steam/steamapps/compatdata/1268860/pfx/drive_c/users/steamuser/AppData/LocalLow/Poobool/Raindrops/Custom";
             }
-            customDirectoryPath.Text = path;
+            customDirectoryEntry.Text = path;
 
             grid.Margin = 20;
             grid.RowHomogeneous = true;
@@ -125,19 +125,21 @@ namespace RaindropsCustomAssist
             grid.RowSpacing = 15;
             grid.ColumnSpacing = 15;
 
-            customDirectoryPath.Valign = Align.Start;
+            customDirectoryEntry.Valign = Align.Start;
             startCopyButton.Valign = Align.Start;
             aboutLabel.Halign = Align.Start;
             
+            startCopyButton.Clicked += startCopyButton_clicked;
+
             ScrolledWindow aboutScoll = new ScrolledWindow();
             aboutScoll.Add(aboutLabel);
             aboutLabel.Valign = Align.Start;
 
-            grid.Attach(customDirectoryPath, 1, 1, 2, 1);
+            grid.Attach(customDirectoryEntry, 1, 1, 2, 1);
             grid.Attach(startCopyButton, 3, 1, 1, 1);
             grid.Attach(aboutScoll, 1, 2, 3, 3);
 
-            customDirectoryPath.Name = "CustomDirectoryPathEntry";
+            customDirectoryEntry.Name = "customDirectoryEntryEntry";
             startCopyButton.Name = "StartCopyButton";
             return grid;
         }

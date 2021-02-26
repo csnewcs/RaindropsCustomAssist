@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using Newtonsoft.Json;
 using Gtk;
 // using Gdk;
@@ -23,6 +24,7 @@ namespace RaindropsCustomAssist
         private void openJsonButton_opened(object o, EventArgs e)
         {
             string filename = openJsonButton.Filename;
+            Console.WriteLine(filename);
             if (filename == "") return;
             jsonPath = filename;
             if(musicPath != "") doneButton.Sensitive = true;
@@ -37,7 +39,25 @@ namespace RaindropsCustomAssist
         }
         private void startCopyButton_clicked(object o, EventArgs e)
         {
-            
+            Thread thread = new Thread(() => {
+                // string jsonName = chabo.jsonFile.Name;
+                var jsonFile = chabo.jsonFile;
+                var musicFile = chabo.musicFile;
+
+                string name = musicFile.Name;
+                string realName = name.Substring(0, musicFile.Name.Length - 4);
+                Console.WriteLine(realName);
+                
+                jsonFile.CopyTo($"{customDirectoryEntry.Text}/{realName}.json");
+                musicFile.CopyTo($"{customDirectoryEntry.Text}/{musicFile.Name}");
+
+                showDialog(new MessageDialog(null, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok, false, "작업을 완료했습니다!"));
+            });
+            thread.Start();
+        }
+        private void showDialog(MessageDialog dialog)
+        {
+            Application.Invoke(delegate {dialog.Run(); dialog.Show(); dialog.Dispose();});
         }
     }
 }
