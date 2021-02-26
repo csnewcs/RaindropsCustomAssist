@@ -85,6 +85,7 @@ namespace RaindropsCustomAssist
         private Grid getMainGrid()
         {
             Resizable = true;
+            SetSizeRequest(500, 400);
             Grid grid = new Grid();
             Stack stack = new Stack();
             stack.AddTitled(getCopyFileGrid(), "커스텀 파일 복사하기", "커스텀 파일 복사하기");
