@@ -84,24 +84,31 @@ namespace RaindropsCustomAssist
         }
         private Grid getMainGrid()
         {
+            Resizable = true;
             Grid grid = new Grid();
             Stack stack = new Stack();
-            stack.AddNamed(getCopyFileGrid(), "커스텀 파일 복사하기");
+            stack.AddTitled(getCopyFileGrid(), "커스텀 파일 복사하기", "커스텀 파일 복사하기");
             StackSidebar stackSidebar = new StackSidebar();
+            
             stackSidebar.Stack = stack;
             grid.RowHomogeneous = true;
             grid.ColumnHomogeneous = true;
-            grid.Attach(stackSidebar, 1, 1, 1, 1);
-            grid.Attach(stack, 2, 1, 4, 1);
-            grid.Attach(doingProgressBar, 1, 2, 5, 1);
+            grid.Attach(stackSidebar, 1, 4, 1, 1);
+            grid.Attach(stack, 2, 4, 4, 1);
+            // grid.Attach(doingProgressBar, 1, 5, 5, 1);
             return grid;
         }
         private Grid getCopyFileGrid()
         {
             Grid grid = new Grid();
             string username = Environment.UserName;
-
             string path = "";
+
+            Label aboutLabel = new Label($"<big>채보 정보</big>\n\t<b>제목</b>: {chabo.title}\n\t노트 수: {chabo.notes.Count}\n\t이벤트 수: {chabo.events.Count}\n\n<big>음악 정보</big>\n\t<b>제목</b>: {chabo.music.title}\n\t아티스트: {string.Join(", ", chabo.music.artists)}\n");
+            aboutLabel.UseMarkup = true;
+            // string summary = ;
+            
+
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) //윈도우이면 그냥 기본 경로
             {
                 path = $"C:/Users/{username}/AppData/LocalLow/Poobool/Raindrops/Custom"; 
@@ -117,13 +124,23 @@ namespace RaindropsCustomAssist
             grid.ColumnHomogeneous = true;
             grid.RowSpacing = 15;
             grid.ColumnSpacing = 15;
+
+            customDirectoryPath.Valign = Align.Start;
+            startCopyButton.Valign = Align.Start;
+            aboutLabel.Halign = Align.Start;
             
+            ScrolledWindow aboutScoll = new ScrolledWindow();
+            aboutScoll.Add(aboutLabel);
+            aboutLabel.Valign = Align.Start;
+
             grid.Attach(customDirectoryPath, 1, 1, 2, 1);
             grid.Attach(startCopyButton, 3, 1, 1, 1);
+            grid.Attach(aboutScoll, 1, 2, 3, 3);
 
             customDirectoryPath.Name = "CustomDirectoryPathEntry";
             startCopyButton.Name = "StartCopyButton";
             return grid;
         }
+
     }
 }

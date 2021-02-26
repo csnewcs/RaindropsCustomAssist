@@ -10,6 +10,7 @@ namespace RaindropsCustomAssist
 {
     partial class MainPage
     {
+        Chabo chabo;
         string musicPath = "";
         string jsonPath = "";
         private void openMusicButton_opened(object o,  EventArgs e)
@@ -28,11 +29,15 @@ namespace RaindropsCustomAssist
         }
         private void doneButton_clicked(object o, EventArgs e)
         {
-            Console.WriteLine("clicked!");
+            chabo = new Chabo(musicPath, jsonPath);
             mainGrid.Attach(getMainGrid(), 1, 1, 1, 1);
             Remove(firstGrid);
             Add(mainGrid);
             mainGrid.ShowAll();
+        }
+        private void startCopyButton_clicked(object o, EventArgs e)
+        {
+            
         }
     }
 }
