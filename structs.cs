@@ -44,7 +44,7 @@ namespace RaindropsCustomAssist
         {
             get {return _events;}
         }
-
+        
 
         public Chabo(string musicPath, string jsonPath)
         {
@@ -93,6 +93,18 @@ namespace RaindropsCustomAssist
             {
                 _events.Add(new Event((double)oneEvent["time"], (double)oneEvent["judge_height"], (double)oneEvent["bpm"], (double)oneEvent["far_modifier"], (double)oneEvent["color"]));
             }
+        }
+        public int[] getNoteCounts()
+        {
+            int[] notes = new int[4]; //0번: 모든 노트, 1번: 클릭 노트, 2번: 휠 노트, 3번: 캐치 노트
+            notes[0] = _notes.Count;
+            foreach(Note note in _notes)
+            {
+                if(note.noteType == NoteType.Click) notes[1]++;
+                else if(note.noteType == NoteType.Wheel) notes[2]++;
+                else notes[3]++;
+            }
+            return notes;
         }
     }
     struct Music

@@ -105,7 +105,8 @@ namespace RaindropsCustomAssist
             string username = Environment.UserName;
             string path = "";
 
-            Label aboutLabel = new Label($"<big>채보 정보</big>\n\t<b>제목</b>: {chabo.title}\n\t노트 수: {chabo.notes.Count}\n\t이벤트 수: {chabo.events.Count}\n\n<big>음악 정보</big>\n\t<b>제목</b>: {chabo.music.title}\n\t아티스트: {string.Join(", ", chabo.music.artists)}\n");
+            int[] noteCounts = chabo.getNoteCounts();
+            Label aboutLabel = new Label($"<big>채보 정보</big>\n\t<b>제목</b>: {chabo.title}\n\t노트 수: {noteCounts[0]}\n\t\t<small>클릭: {noteCounts[1]}</small>\n\t\t<small>휠: {noteCounts[2]}</small>\n\t\t<small>캐치: {noteCounts[3]}</small>\n\t이벤트 수: {chabo.events.Count}\n\n<big>음악 정보</big>\n\t<b>제목</b>: {chabo.music.title}\n\t아티스트: {string.Join(", ", chabo.music.artists)}\n\t길이: {(int)chabo.music.duration.TotalMinutes}:{chabo.music.duration.Seconds}");
             aboutLabel.UseMarkup = true;
             // string summary = ;
             
@@ -138,7 +139,7 @@ namespace RaindropsCustomAssist
 
             grid.Attach(customDirectoryEntry, 1, 1, 2, 1);
             grid.Attach(startCopyButton, 3, 1, 1, 1);
-            grid.Attach(aboutScoll, 1, 2, 3, 3);
+            grid.Attach(aboutScoll, 1, 2, 3, 6);
 
             customDirectoryEntry.Name = "customDirectoryEntryEntry";
             startCopyButton.Name = "StartCopyButton";

@@ -24,7 +24,6 @@ namespace RaindropsCustomAssist
         private void openJsonButton_opened(object o, EventArgs e)
         {
             string filename = openJsonButton.Filename;
-            Console.WriteLine(filename);
             if (filename == "") return;
             jsonPath = filename;
             if(musicPath != "") doneButton.Sensitive = true;
@@ -46,7 +45,6 @@ namespace RaindropsCustomAssist
 
                 string name = musicFile.Name;
                 string realName = name.Substring(0, musicFile.Name.Length - 4);
-                Console.WriteLine(realName);
                 
                 jsonFile.CopyTo($"{customDirectoryEntry.Text}/{realName}.json");
                 musicFile.CopyTo($"{customDirectoryEntry.Text}/{musicFile.Name}");
