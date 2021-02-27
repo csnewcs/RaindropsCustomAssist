@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
@@ -22,6 +23,15 @@ namespace RaindropsCustomAssist
         // ===================파일 복사하는 곳에서 보이는 위젯 =================
         Entry customDirectoryEntry = new Entry();
         Button startCopyButton = new Button("복사 시작!");
+        //====================듣기==========================
+        Label  timeLabel;
+        Scale timeScale;
+        Button playPauseButton;
+        CheckButton musicSound = new CheckButton("음악 소리");
+        CheckButton noteSound = new CheckButton("노트 소리");
+            CheckButton wheelNotes = new CheckButton("휠");
+            CheckButton catchNotes = new CheckButton("캐치");
+            CheckButton clickNotes = new CheckButton("클릭");
         //==========================계속 아래쪽에 있을 위젯====================
         ProgressBar doingProgressBar = new ProgressBar();
         
@@ -93,6 +103,7 @@ namespace RaindropsCustomAssist
             Grid grid = new Grid();
             Stack stack = new Stack();
             stack.AddTitled(getCopyFileGrid(), "커스텀 파일 복사하기", "커스텀 파일 복사하기");
+            stack.AddTitled(getListenGrid(), "듣기", "듣기");
             StackSidebar stackSidebar = new StackSidebar();
             
             doingProgressBar.Valign = Align.End;
@@ -152,6 +163,48 @@ namespace RaindropsCustomAssist
             startCopyButton.Name = "StartCopyButton";
             return grid;
         }
+        private Grid getListenGrid()
+        {
+            Grid grid = new Grid();
+            TimeSpan musicDuration = chabo.music.duration;
+            timeScale = new Scale(Orientation.Horizontal, new Adjustment(0, 0, (int)musicDuration.TotalSeconds, 0, 1, 0));
+                timeScale.Digits = 0;
+                timeScale.DrawValue = false;
+                timeScale.ChangeValue += timeScale_valueChanged;
+            timeLabel = new Label($"0:00 / {timeToString(musicDuration)}");
+            playPauseButton = new Button("▶️"); //▶️ ⏸️ ⏸
+            playPauseButton.Clicked  += playPauseButton_clicked;
 
+            Grid time = new Grid();
+                time.ColumnHomogeneous = true;
+                time.Attach(timeScale, 1, 1, 1, 1);
+                time.Attach(timeLabel, 1 ,2 ,1, 1);
+            Grid listenTo = new Grid();
+                Grid selectNotes = new Grid();           
+                    selectNotes.Attach(clickNotes, 1, 1, 1, 1);
+                    selectNotes.Attach(wheelNotes, 1, 2, 1, 1);
+                    selectNotes.Attach(catchNotes, 1, 3, 1, 1);
+                listenTo.Attach(musicSound, 1, 1, 2, 1);
+                listenTo.Attach(noteSound, 1, 2, 2, 1);
+                listenTo.Attach(selectNotes, 2, 3, 1, 1);
+                listenTo.Margin = 15;
+            ScrolledWindow listenToScroll = new ScrolledWindow();
+            listenToScroll.Add(listenTo);            
+            Frame listenToFrame = new Frame("들을 소리");
+            listenToFrame.Add(listenToScroll);
+
+            grid.Margin = 20;
+            grid.RowSpacing = 20;
+            grid.ColumnSpacing = 20;
+            grid.ColumnHomogeneous = true;
+            grid.RowHomogeneous = true;
+
+            // grid.Attach(timeScale, 1, 1, 3, 1);
+            // grid.Attach(timeLabel, 1, 2, 3, 1);
+            grid.Attach(time, 1, 1, 3, 1);
+            grid.Attach(playPauseButton, 1, 3, 1, 1);
+            grid.Attach(listenToFrame, 4, 1, 3, 3);
+            return grid;
+        }
     }
 }

@@ -2,9 +2,14 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Media;
 using System.Threading;
 using Newtonsoft.Json;
+using NetCoreAudio;
+using TinyAudio;
+using TinyAudio.DirectSound;
 using Gtk;
+
 // using Gdk;
 
 namespace RaindropsCustomAssist
@@ -14,6 +19,12 @@ namespace RaindropsCustomAssist
         Chabo chabo;
         string musicPath = "";
         string jsonPath = "";
+        Player player = new Player();
+        bool played = false;
+        private string timeToString(TimeSpan time)
+        {
+            return $"{(int)time.TotalMinutes}:{time.Seconds}";
+        }
         private void openMusicButton_opened(object o,  EventArgs e)
         {
             string filename = openMusicButton.Filename;
@@ -46,14 +57,44 @@ namespace RaindropsCustomAssist
                 string name = musicFile.Name;
                 string realName = name.Substring(0, musicFile.Name.Length - 4);
                 
-                jsonFile.CopyTo($"{customDirectoryEntry.Text}/{realName}.json");
+                jsonPath = $"{customDirectoryEntry.Text}/{realName}.json";
+                musicPath = $"{customDirectoryEntry.Text}/{musicFile.Name}";
+                
+                jsonFile.CopyTo(jsonPath);
                 setFraction(0.5);
-                musicFile.CopyTo($"{customDirectoryEntry.Text}/{musicFile.Name}");
+                musicFile.CopyTo(musicPath);
                 setFraction(1);
 
                 showDialog(new MessageDialog(null, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok, false, "작업을 완료했습니다!"));
             });
             thread.Start();
+        }
+        private void timeScale_valueChanged(object o, EventArgs e)
+        {
+            timeLabel.Text = $"{((int)timeScale.Value) / 60}:{((int)timeScale.Value) % 60} / {timeToString(chabo.music.duration)}";
+        }
+        private void playPauseButton_clicked(object o, EventArgs e)
+        {
+            if(playPauseButton.Label == "▶️")
+            {
+                playPauseButton.Label = "⏸";
+                if(played)
+                {
+                    player.Resume();
+                }
+                else
+                {
+                    player.Play(musicPath);
+                    
+                    played = true;
+                }
+            }
+            else
+            {
+                playPauseButton.Label = "▶️";
+                player.Pause();
+            }
+            // player.
         }
         private void showDialog(MessageDialog dialog)
         {
@@ -93,5 +134,6 @@ namespace RaindropsCustomAssist
                 }
             });
         }
+
     }
 }
