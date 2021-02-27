@@ -1,9 +1,12 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Diagnostics;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+
+using NetCoreAudio;
 
 using Gtk;
 using Gdk;
@@ -38,7 +41,7 @@ namespace RaindropsCustomAssist
 
         public MainPage() : base("방울비 커스텀 보조 프로그램")
         {
-            DeleteEvent += delegate {Application.Quit();};
+            DeleteEvent += delegate {Application.Quit(); player.Stop();};
             SetDefaultSize(350, 220);
             Resizable = false;
             mainGrid.RowHomogeneous = true;
@@ -165,6 +168,8 @@ namespace RaindropsCustomAssist
         }
         private Grid getListenGrid()
         {
+            setOffset();
+
             Grid grid = new Grid();
             TimeSpan musicDuration = chabo.music.duration;
             timeScale = new Scale(Orientation.Horizontal, new Adjustment(0, 0, (int)musicDuration.TotalSeconds, 0, 1, 0));
@@ -205,6 +210,17 @@ namespace RaindropsCustomAssist
             grid.Attach(playPauseButton, 1, 3, 1, 1);
             grid.Attach(listenToFrame, 4, 1, 3, 3);
             return grid;
+        }
+        private void setOffset()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            Player player = new Player();
+            player.Play("note.mp3");
+            sw.Stop();
+            player.Stop();
+            offset = sw.ElapsedTicks;
+            Console.WriteLine("설정된 오프셋: {0}", offset);
         }
     }
 }

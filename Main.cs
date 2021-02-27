@@ -6,8 +6,6 @@ using System.Media;
 using System.Threading;
 using Newtonsoft.Json;
 using NetCoreAudio;
-using TinyAudio;
-using TinyAudio.DirectSound;
 using Gtk;
 
 // using Gdk;
@@ -21,6 +19,11 @@ namespace RaindropsCustomAssist
         string jsonPath = "";
         Player player = new Player();
         bool played = false;
+        double time = 0;
+        int index = 0;
+        long offset = 0;
+        Stopwatch sw = new Stopwatch();
+        
         private string timeToString(TimeSpan time)
         {
             return $"{(int)time.TotalMinutes}:{time.Seconds}";
@@ -75,24 +78,39 @@ namespace RaindropsCustomAssist
         }
         private void playPauseButton_clicked(object o, EventArgs e)
         {
+            double[] noteTimes = new double[chabo.getNoteCounts()[1]];
+            int i = 0;
+            foreach(var note in chabo.notes)
+            {
+                if(note.noteType == NoteType.Click)
+                {
+                    noteTimes[i] = note.time;
+                    i++;
+                }
+            }
+            
+            Thread noteSoundThread = new Thread(() => noteSoundPlay(noteTimes));
             if(playPauseButton.Label == "▶️")
             {
                 playPauseButton.Label = "⏸";
                 if(played)
                 {
                     player.Resume();
+                    sw.Start();
                 }
                 else
                 {
                     player.Play(musicPath);
-                    
                     played = true;
+                    sw.Restart();
                 }
+                noteSoundThread.Start();
             }
             else
             {
                 playPauseButton.Label = "▶️";
                 player.Pause();
+                sw.Stop();
             }
             // player.
         }
@@ -134,6 +152,18 @@ namespace RaindropsCustomAssist
                 }
             });
         }
-
+        private void noteSoundPlay(double[] noteTimes)
+        {
+            while(this.player.Playing)
+            {
+                if((double)(sw.ElapsedTicks - offset) / 1000000000 >= noteTimes[index])
+                {
+                    Player player = new Player();
+                    player.Play("note.mp3");
+                    Console.WriteLine("{0}번째 노트, {1}틱", index, sw.ElapsedTicks);
+                    index++;
+                }
+            }
+        }
     }
 }
