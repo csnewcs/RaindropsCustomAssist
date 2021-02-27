@@ -34,6 +34,10 @@ namespace RaindropsCustomAssist
             mainGrid.RowHomogeneous = true;
             mainGrid.ColumnHomogeneous = true;
 
+            CssProvider cssProvider = new CssProvider();
+            cssProvider.LoadFromPath("design.css");
+            StyleContext.AddProviderForScreen(this.Screen, cssProvider, 800);
+
              firstGrid  = getFirstGrid();//프로그램 켰을 때 뜨는 표, 곡 선택 등
             // List<Grid> editGrids = new List<Grid>(); //채보를 수정하는 기능들을 담는 표들의 묶음
             // List<Grid> settingGrids = new List<Grid>(); //쓸진 모르겠지만 설정
@@ -45,8 +49,8 @@ namespace RaindropsCustomAssist
         private Grid getFirstGrid()
         {
             Grid grid = new Grid();
-            Label openMusicLable = new Label("음악 파일 열기");
-            Label openJsonLable = new Label("JSON 파일 열기");
+            Label openMusicLabel = new Label("음악 파일 열기");
+            Label openJsonLabel = new Label("JSON 파일 열기");
             doneButton.Sensitive = false;
 
             openMusicButton.FileSet += openMusicButton_opened;
@@ -58,8 +62,8 @@ namespace RaindropsCustomAssist
             openMusicButton.AddFilter(musicFileFilter);
             openJsonButton.AddFilter(jsonFileFilter);
 
-            grid.Attach(openMusicLable, 1, 1, 1, 1);
-            grid.Attach(openJsonLable, 1, 2, 1,1);
+            grid.Attach(openMusicLabel, 1, 1, 1, 1);
+            grid.Attach(openJsonLabel, 1, 2, 1,1);
             grid.Attach(openMusicButton, 2, 1, 1, 1);
             grid.Attach(openJsonButton, 2, 2, 1, 1);
             grid.Attach(doneButton, 3, 1, 1, 2);
@@ -70,12 +74,12 @@ namespace RaindropsCustomAssist
             grid.Margin = 20;
 
             //CSS를 위한 이름 및 클래스 설정
-            openMusicLable.Name = "OpenMusicLable";
-            openMusicLable.StyleContext.AddClass("OpenFileLable");
+            openMusicLabel.Name = "OpenMusicLabel";
+            openMusicLabel.StyleContext.AddClass("OpenFileLabel");
             openMusicButton.Name = "OpenMusicButton";
             openMusicButton.StyleContext.AddClass("OpenFileButton");
-            openJsonLable.Name = "OpenJsonLable";
-            openJsonLable.StyleContext.AddClass("OpenFileLable");
+            openJsonLabel.Name = "OpenJsonLable";
+            openJsonLabel.StyleContext.AddClass("OpenFileLabel");
             openJsonButton.Name = "OpenJsonButton";
             openJsonButton.StyleContext.AddClass("OpenFileButton");
             doneButton.Name = "DoneButton";
@@ -91,12 +95,15 @@ namespace RaindropsCustomAssist
             stack.AddTitled(getCopyFileGrid(), "커스텀 파일 복사하기", "커스텀 파일 복사하기");
             StackSidebar stackSidebar = new StackSidebar();
             
+            doingProgressBar.Valign = Align.End;
             stackSidebar.Stack = stack;
             grid.RowHomogeneous = true;
             grid.ColumnHomogeneous = true;
-            grid.Attach(stackSidebar, 1, 4, 1, 1);
-            grid.Attach(stack, 2, 4, 4, 1);
-            // grid.Attach(doingProgressBar, 1, 5, 5, 1);
+            grid.Attach(stackSidebar, 1, 1, 1, 6);
+            grid.Attach(stack, 2, 1, 4, 6);
+            grid.Attach(doingProgressBar, 1, 7, 5, 1);
+
+            doingProgressBar.Name = "DoingProgressBar";
             return grid;
         }
         private Grid getCopyFileGrid()

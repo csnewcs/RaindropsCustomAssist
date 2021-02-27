@@ -1,0 +1,11 @@
+#DoingProgressBar > trough > progress {
+    min-height: 30px;
+    background-color: skyblue;
+    outline-color: skyblue;
+}
+#DoingProgressBar > trough {
+    min-height: 30px;
+}
+/* #OpenMusicLabel {
+    font-size: 50pt;
+} */
