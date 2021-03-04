@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Media;
 using System.Threading;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using NetCoreAudio;
 using Gtk;
@@ -15,6 +16,7 @@ namespace RaindropsCustomAssist
     partial class MainPage
     {
         Chabo chabo;
+        Setting setting;
         string musicPath = "";
         string jsonPath = "";
         Player player = new Player();
@@ -23,6 +25,9 @@ namespace RaindropsCustomAssist
         int index = 0;
         long offset = 0;
         Stopwatch sw = new Stopwatch();
+        double sink = 0;
+        int sinkLooped = 0;
+
         
         private string timeToString(TimeSpan time)
         {
@@ -78,15 +83,15 @@ namespace RaindropsCustomAssist
         }
         private void playPauseButton_clicked(object o, EventArgs e)
         {
-            double[] noteTimes = new double[chabo.getNoteCounts()[1]];
+            double[] noteTimes = new double[chabo.getNoteCounts()[0]];
             int i = 0;
             foreach(var note in chabo.notes)
             {
-                if(note.noteType == NoteType.Click)
-                {
+                // if(note.noteType == NoteType.Click)
+                // {
                     noteTimes[i] = note.time;
                     i++;
-                }
+                // }
             }
             
             Thread noteSoundThread = new Thread(() => noteSoundPlay(noteTimes));
@@ -113,6 +118,42 @@ namespace RaindropsCustomAssist
                 sw.Stop();
             }
             // player.
+        }
+        private void setSinkButton_clicked(object o, EventArgs e)
+        {
+            if(sinkLooped == 0)
+            {
+                sw.Reset();
+                sinkLabel.Text = "방울 소리가 들리면 버튼을 누르세요";
+                Thread soundPlayThread = new Thread(() => {
+                    Player player = new Player();
+                    while(sinkLooped < 11)
+                    {
+                        // sw.Reset();
+                        Thread.Sleep(1000);
+                        sw.Reset();
+                        // if(sinks[sinkLooped - 1] == 0)
+                        sw.Start();
+                        player.Play("note.mp3");
+                        sinkLooped++;
+                        Console.WriteLine("looped!");
+                    }
+                });
+                soundPlayThread.Start();
+            }
+            else
+            {
+                sink = ((double)sw.ElapsedTicks) / 1000000000;
+                sinkLabel.Text = $"{sink}초";
+                sinkLooped++;
+                if(sinkLooped >= 11)
+                {
+                    sinkLooped = 0;
+                    setting.offset = sink;
+                    setting.saveSetting();
+                    sinkLabel.Text = $"싱크 설정 완료! 설정된 싱크: {sink}초";
+                }
+            }
         }
         private void showDialog(MessageDialog dialog)
         {
@@ -154,16 +195,24 @@ namespace RaindropsCustomAssist
         }
         private void noteSoundPlay(double[] noteTimes)
         {
+            double offset = setting.offset;
+            Console.WriteLine(offset);
             while(this.player.Playing)
             {
-                if((double)(sw.ElapsedTicks - offset) / 1000000000 >= noteTimes[index])
+                if(((double)sw.ElapsedTicks) / 1000000000 + setting.offset >= noteTimes[index])
                 {
                     Player player = new Player();
                     player.Play("note.mp3");
-                    Console.WriteLine("{0}번째 노트, {1}틱", index, sw.ElapsedTicks);
+                    Application.Invoke(delegate {
+                        noteLabel.Text = $"<big><b>현재 노트</b></big>\n노트 종류: {chabo.notes[index].noteType}\n시간: {chabo.notes[index].time}";
+                        noteLabel.UseMarkup = true;
+                    });
+                    // Console.WriteLine("{0}번째 노트, {1}초, 오프셋 {2}", index, noteTimes[index], setting.offset);
                     index++;
+                    if(index >= chabo.notes.Count) break;
                 }
             }
         }
+    
     }
 }

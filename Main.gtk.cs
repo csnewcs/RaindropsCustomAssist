@@ -28,6 +28,7 @@ namespace RaindropsCustomAssist
         Button startCopyButton = new Button("복사 시작!");
         //====================듣기==========================
         Label  timeLabel;
+        Label noteLabel = new Label();
         Scale timeScale;
         Button playPauseButton;
         CheckButton musicSound = new CheckButton("음악 소리");
@@ -35,6 +36,9 @@ namespace RaindropsCustomAssist
             CheckButton wheelNotes = new CheckButton("휠");
             CheckButton catchNotes = new CheckButton("캐치");
             CheckButton clickNotes = new CheckButton("클릭");
+        //==========================설정==========================
+        Label sinkLabel;
+
         //==========================계속 아래쪽에 있을 위젯====================
         ProgressBar doingProgressBar = new ProgressBar();
         
@@ -101,12 +105,14 @@ namespace RaindropsCustomAssist
         }
         private Grid getMainGrid()
         {
+            setting = new Setting();
             Resizable = true;
             SetSizeRequest(500, 400);
             Grid grid = new Grid();
             Stack stack = new Stack();
             stack.AddTitled(getCopyFileGrid(), "커스텀 파일 복사하기", "커스텀 파일 복사하기");
             stack.AddTitled(getListenGrid(), "듣기", "듣기");
+            stack.AddTitled(getSettingGrid(), "설정", "설정");
             StackSidebar stackSidebar = new StackSidebar();
             
             doingProgressBar.Valign = Align.End;
@@ -177,6 +183,7 @@ namespace RaindropsCustomAssist
                 timeScale.DrawValue = false;
                 timeScale.ChangeValue += timeScale_valueChanged;
             timeLabel = new Label($"0:00 / {timeToString(musicDuration)}");
+            noteLabel.Halign = Align.Start;
             playPauseButton = new Button("▶️"); //▶️ ⏸️ ⏸
             playPauseButton.Clicked  += playPauseButton_clicked;
 
@@ -207,8 +214,23 @@ namespace RaindropsCustomAssist
             // grid.Attach(timeScale, 1, 1, 3, 1);
             // grid.Attach(timeLabel, 1, 2, 3, 1);
             grid.Attach(time, 1, 1, 3, 1);
+            grid.Attach(noteLabel, 1, 2, 3, 1);
             grid.Attach(playPauseButton, 1, 3, 1, 1);
             grid.Attach(listenToFrame, 4, 1, 3, 3);
+            return grid;
+        }
+        private Grid getSettingGrid()
+        {
+            Grid grid = new Grid();
+                Frame sinkFrame = new Frame("싱크 설정");
+                    Grid sinkGrid = new Grid();
+                        sinkLabel = new Label("싱크를 설정하려면 버튼을 누르세요");
+                        Button setSinkButton = new Button("싱크 설정하기");
+                        setSinkButton.Clicked += setSinkButton_clicked;
+                    sinkGrid.Attach(sinkLabel, 1, 1, 3, 1);
+                    sinkGrid.Attach(setSinkButton, 4, 1, 1, 1);
+                sinkFrame.Add(sinkGrid);
+            grid.Attach(sinkFrame, 1, 1, 1, 1);            
             return grid;
         }
         private void setOffset()
@@ -220,7 +242,7 @@ namespace RaindropsCustomAssist
             sw.Stop();
             player.Stop();
             offset = sw.ElapsedTicks;
-            Console.WriteLine("설정된 오프셋: {0}", offset);
+            // Console.WriteLine("설정된 오프셋: {0}", offset);
         }
     }
 }

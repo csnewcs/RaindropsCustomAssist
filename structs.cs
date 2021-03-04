@@ -197,4 +197,51 @@ namespace RaindropsCustomAssist
     {
         Right, Left
     }
+    class Setting
+    {
+        double _offset;
+        public double offset
+        {
+            get { return _offset;}
+            set {_offset = value;}
+        }
+        public Setting()
+        {
+            string path = "config.json";
+            try
+            {
+                string fileOpen = File.ReadAllText(path);
+                JObject settingJson = JObject.Parse(fileOpen);
+                Console.WriteLine(settingJson);
+                _offset = (double)settingJson["offset"];
+            }
+            catch
+            {
+                Console.WriteLine("catch");
+                _offset = 0;
+                saveSetting(path);
+            }
+        }
+        public void loadSetting(string path = "config.json")
+        {
+            try
+            {
+                string fileOpen = File.ReadAllText(path);
+                JObject settingJson = JObject.Parse(fileOpen);
+                _offset = (double)settingJson["offset"];
+            }
+            catch
+            {
+                _offset = 0;
+                saveSetting(path);
+            }
+        }
+        public void saveSetting(string path = "config.json")
+        {
+            JObject settingJson = new JObject();
+            settingJson.Add("offset", _offset);
+
+            File.WriteAllText(path, settingJson.ToString());
+        }
+    }
 }
