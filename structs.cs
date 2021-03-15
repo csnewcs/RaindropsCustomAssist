@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
+using SixLabors.ImageSharp;
+
 namespace RaindropsCustomAssist
 {
     struct Chabo
@@ -15,6 +17,7 @@ namespace RaindropsCustomAssist
         Music _music;
         string _title;
         int _bpm;
+        
         
         public FileInfo musicFile
         {
@@ -74,6 +77,7 @@ namespace RaindropsCustomAssist
                 NoteType noteType = NoteType.Click; //need_input으로 결정, 0, 1이면  클릭 / 2, 3이면 휠 / 4, 5면 캐치
                 From from = From.Right; //need_input으로 결정, 짝수는 오른쪽, 홀수는 왼쪽
                 int needInput = (int)note["need_input"];
+                int vx = (int)note["vx"];
                 switch(needInput)
                 {
                     case 2 or 3:
@@ -83,11 +87,15 @@ namespace RaindropsCustomAssist
                         noteType = NoteType.Catch;
                         break;
                 }
-                if (needInput % 2 == 1)
+                if (vx < 0)
                 {
                     from = From.Left;
                 }
                 _notes.Add(new Note((double)note["time"], noteType, from, (double)note["y"], (double)note["dy"], (double)note["length"], (double)note["vx"]));
+            }
+            for(int i = 0; i < 10; i++)
+            {
+                Console.WriteLine("{0}, {1}, {2}", _notes[i].time, _notes[i].noteType, _notes[i].from);
             }
             foreach(var oneEvent in eventJson)
             {

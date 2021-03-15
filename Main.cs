@@ -95,6 +95,7 @@ namespace RaindropsCustomAssist
             }
             
             Thread noteSoundThread = new Thread(() => noteSoundPlay(noteTimes));
+            Thread syncMusicAndScaleThread = new Thread(syncMusicAndScale);
             if(playPauseButton.Label == "▶️")
             {
                 playPauseButton.Label = "⏸";
@@ -102,6 +103,7 @@ namespace RaindropsCustomAssist
                 {
                     player.Resume();
                     sw.Start();
+                    
                 }
                 else
                 {
@@ -110,6 +112,7 @@ namespace RaindropsCustomAssist
                     sw.Restart();
                 }
                 noteSoundThread.Start();
+                syncMusicAndScaleThread.Start();
             }
             else
             {
@@ -196,23 +199,41 @@ namespace RaindropsCustomAssist
         private void noteSoundPlay(double[] noteTimes)
         {
             double offset = setting.offset;
-            Console.WriteLine(offset);
-            while(this.player.Playing)
+            while(this.player.Playing && index < chabo.notes.Count)
             {
                 if(((double)sw.ElapsedTicks) / 1000000000 + setting.offset >= noteTimes[index])
                 {
                     Player player = new Player();
                     player.Play("note.mp3");
+                    int now = index;
+                    Note note = chabo.notes[now];
                     Application.Invoke(delegate {
-                        noteLabel.Text = $"<big><b>현재 노트</b></big>\n노트 종류: {chabo.notes[index].noteType}\n시간: {chabo.notes[index].time}";
-                        noteLabel.UseMarkup = true;
+                        if(note.from == From.Left)
+                        {
+                            leftNoteLabel.Text = $"<big><b>현재 노트</b></big>\n{now + 1}번째 노트\n노트 종류: {note.noteType}\n시간: {note.time}";
+                            leftNoteLabel.UseMarkup = true;
+                        }
+                        else
+                        {
+                            rightNoteLabel.Text = $"<big><b>현재 노트</b></big>\n{now + 1}번째 노트\n노트 종류: {note.noteType}\n시간: {note.time}";
+                            rightNoteLabel.UseMarkup = true;
+                        }
                     });
                     // Console.WriteLine("{0}번째 노트, {1}초, 오프셋 {2}", index, noteTimes[index], setting.offset);
                     index++;
-                    if(index >= chabo.notes.Count) break;
                 }
             }
         }
-    
+        private void syncMusicAndScale()
+        {
+            while(player.Playing)
+            {
+                Thread.Sleep(100);
+                Application.Invoke(delegate {
+                    timeScale.Value = sw.Elapsed.TotalSeconds;
+                    timeLabel.Text = $"{((int)timeScale.Value) / 60}:{((int)timeScale.Value) % 60} / {timeToString(chabo.music.duration)}";
+                });
+            }
+        }
     }
 }

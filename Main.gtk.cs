@@ -28,7 +28,8 @@ namespace RaindropsCustomAssist
         Button startCopyButton = new Button("복사 시작!");
         //====================듣기==========================
         Label  timeLabel;
-        Label noteLabel = new Label();
+        Label leftNoteLabel = new Label();
+        Label rightNoteLabel = new Label();
         Scale timeScale;
         Button playPauseButton;
         CheckButton musicSound = new CheckButton("음악 소리");
@@ -36,6 +37,10 @@ namespace RaindropsCustomAssist
             CheckButton wheelNotes = new CheckButton("휠");
             CheckButton catchNotes = new CheckButton("캐치");
             CheckButton clickNotes = new CheckButton("클릭");
+        //======================메타데이터 설정====================
+        Image chaboImage = new Image();
+        SpinButton levelSpinButton = new SpinButton(new Adjustment(1, 1, 20, 1, 1, 1), 1, 0); //레벨 선택 SpinButton(최대 20)
+        Entry titleEntry = new Entry("");
         //==========================설정==========================
         Label sinkLabel;
 
@@ -183,7 +188,8 @@ namespace RaindropsCustomAssist
                 timeScale.DrawValue = false;
                 timeScale.ChangeValue += timeScale_valueChanged;
             timeLabel = new Label($"0:00 / {timeToString(musicDuration)}");
-            noteLabel.Halign = Align.Start;
+            leftNoteLabel.Halign = Align.Start;
+            rightNoteLabel.Halign = Align.Start;
             playPauseButton = new Button("▶️"); //▶️ ⏸️ ⏸
             playPauseButton.Clicked  += playPauseButton_clicked;
 
@@ -213,10 +219,11 @@ namespace RaindropsCustomAssist
 
             // grid.Attach(timeScale, 1, 1, 3, 1);
             // grid.Attach(timeLabel, 1, 2, 3, 1);
-            grid.Attach(time, 1, 1, 3, 1);
-            grid.Attach(noteLabel, 1, 2, 3, 1);
-            grid.Attach(playPauseButton, 1, 3, 1, 1);
-            grid.Attach(listenToFrame, 4, 1, 3, 3);
+            grid.Attach(time, 1, 1, 6, 1);
+            grid.Attach(leftNoteLabel, 1, 2, 3, 1);
+            grid.Attach(rightNoteLabel, 4, 2, 3, 1);
+            grid.Attach(playPauseButton, 1, 3, 3, 1);
+            grid.Attach(listenToFrame, 7, 1, 3, 3);
             return grid;
         }
         private Grid getSettingGrid()
@@ -233,6 +240,12 @@ namespace RaindropsCustomAssist
             grid.Attach(sinkFrame, 1, 1, 1, 1);            
             return grid;
         }
+        private Grid getSetMetaDataGrid()
+        {
+            Grid grid = new Grid();
+            return grid;
+        }
+        
         private void setOffset()
         {
             Stopwatch sw = new Stopwatch();
