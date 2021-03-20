@@ -39,8 +39,9 @@ namespace RaindropsCustomAssist
             CheckButton clickNotes = new CheckButton("클릭");
         //======================메타데이터 설정====================
         Image chaboImage = new Image();
-        SpinButton levelSpinButton = new SpinButton(new Adjustment(1, 1, 20, 1, 1, 1), 1, 0); //레벨 선택 SpinButton(최대 20)
+        SpinButton levelSpinButton = new SpinButton(new Adjustment(1, 1, 21, 1, 1, 1), 1, 0); //레벨 선택 SpinButton(최대 20)
         Entry titleEntry = new Entry("");
+        SpinButton bpmSpinButton = new SpinButton(new Adjustment(150, 1, 5001, 1, 1, 1), 1, 0);
         //==========================설정==========================
         Label sinkLabel;
 
@@ -117,6 +118,7 @@ namespace RaindropsCustomAssist
             Stack stack = new Stack();
             stack.AddTitled(getCopyFileGrid(), "커스텀 파일 복사하기", "커스텀 파일 복사하기");
             stack.AddTitled(getListenGrid(), "듣기", "듣기");
+            stack.AddTitled(getSetMetaDataGrid(), "데이터 수정", "데이터 수정");
             stack.AddTitled(getSettingGrid(), "설정", "설정");
             StackSidebar stackSidebar = new StackSidebar();
             
@@ -243,6 +245,13 @@ namespace RaindropsCustomAssist
         private Grid getSetMetaDataGrid()
         {
             Grid grid = new Grid();
+            Label title = new Label("<big><bold>제목</bold></big>"); title.UseMarkup = true;
+            grid.Attach(title, 1, 1, 1, 1);
+            grid.Attach(titleEntry, 2, 1, 3, 1);
+            Label bpm = new Label("bpm");
+            grid.Attach(bpm, 1, 2, 1, 1);
+            grid.Attach(bpmSpinButton, 2, 2, 3, 1);
+            
             return grid;
         }
         

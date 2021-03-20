@@ -83,18 +83,15 @@ namespace RaindropsCustomAssist
         }
         private void playPauseButton_clicked(object o, EventArgs e)
         {
-            double[] noteTimes = new double[chabo.getNoteCounts()[0]];
-            int i = 0;
+            List<Note> notes = new List<Note>();
             foreach(var note in chabo.notes)
             {
-                // if(note.noteType == NoteType.Click)
-                // {
-                    noteTimes[i] = note.time;
-                    i++;
-                // }
+                if(note.noteType == NoteType.Click && clickNotes.Active) notes.Add(note);
+                else if(note.noteType == NoteType.Catch && catchNotes.Active) notes.Add(note);
+                else if(note.noteType == NoteType.Wheel && wheelNotes.Active) notes.Add(note);
             }
             
-            Thread noteSoundThread = new Thread(() => noteSoundPlay(noteTimes));
+            Thread noteSoundThread = new Thread(() => noteSoundPlay(notes.ToArray()));
             Thread syncMusicAndScaleThread = new Thread(syncMusicAndScale);
             if(playPauseButton.Label == "▶️")
             {
@@ -196,26 +193,26 @@ namespace RaindropsCustomAssist
                 }
             });
         }
-        private void noteSoundPlay(double[] noteTimes)
+        private void noteSoundPlay(Note[] notes)
         {
             double offset = setting.offset;
-            while(this.player.Playing && index < chabo.notes.Count)
+            while(this.player.Playing && index < notes.Length)
             {
-                if(((double)sw.ElapsedTicks) / 1000000000 + setting.offset >= noteTimes[index])
+                if(((double)sw.ElapsedTicks) / 1000000000 + setting.offset >= notes[index].time)
                 {
                     Player player = new Player();
                     player.Play("note.mp3");
-                    int now = index;
-                    Note note = chabo.notes[now];
+                    int nowIndex = index;
                     Application.Invoke(delegate {
-                        if(note.from == From.Left)
+                        Note now = notes[nowIndex];
+                        if(now.from == From.Left)
                         {
-                            leftNoteLabel.Text = $"<big><b>현재 노트</b></big>\n{now + 1}번째 노트\n노트 종류: {note.noteType}\n시간: {note.time}";
+                            leftNoteLabel.Text = $"<big><b>현재 노트</b></big>\n{now.index}번째 노트\n노트 종류: {now.noteType}\n시간: {now.time}";
                             leftNoteLabel.UseMarkup = true;
                         }
                         else
                         {
-                            rightNoteLabel.Text = $"<big><b>현재 노트</b></big>\n{now + 1}번째 노트\n노트 종류: {note.noteType}\n시간: {note.time}";
+                            rightNoteLabel.Text = $"<big><b>현재 노트</b></big>\n{now.index}번째 노트\n노트 종류: {now.noteType}\n시간: {now.time}";
                             rightNoteLabel.UseMarkup = true;
                         }
                     });

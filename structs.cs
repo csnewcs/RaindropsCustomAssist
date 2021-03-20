@@ -72,6 +72,7 @@ namespace RaindropsCustomAssist
             _bpm = (int)json["bpm_for_custom"];
             _title = json["title_for_custom"].ToString();
 
+            int index = 1;
             foreach(var note in noteJson)
             {
                 NoteType noteType = NoteType.Click; //need_input으로 결정, 0, 1이면  클릭 / 2, 3이면 휠 / 4, 5면 캐치
@@ -91,7 +92,8 @@ namespace RaindropsCustomAssist
                 {
                     from = From.Left;
                 }
-                _notes.Add(new Note((double)note["time"], noteType, from, (double)note["y"], (double)note["dy"], (double)note["length"], (double)note["vx"]));
+                _notes.Add(new Note(index, (double)note["time"], noteType, from, (double)note["y"], (double)note["dy"], (double)note["length"], (double)note["vx"]));
+                index++;
             }
             for(int i = 0; i < 10; i++)
             {
@@ -174,6 +176,7 @@ namespace RaindropsCustomAssist
         double _speed;
         NoteType _type;
         From _from;
+        int _index;
         public double time
         {
             get {return _time;}
@@ -186,8 +189,13 @@ namespace RaindropsCustomAssist
         {
             get {return _from;}
         }
-        public Note(double time, NoteType noteType, From from, double yPoint, double endYPoint, double length, double noteSpeed)
+        public int index
         {
+            get {return _index;}
+        }
+        public Note(int index, double time, NoteType noteType, From from, double yPoint, double endYPoint, double length, double noteSpeed)
+        {
+            _index = index;
             _time = time;
             _type = noteType;
             _yPoint = yPoint;
